@@ -9,13 +9,9 @@ RUN bash /install-pkgs.sh
 
 ENV gvm_libs_version="v11.0.1" \
     openvas_scanner_version="v7.0.1" \
-    gvmd_version="v9.0.1" \
-    gsa_version="v9.0.1" \
-    gvm_tools_version="2.1.0" \
     openvas_smb="v1.0.5" \
     open_scanner_protocol_daemon="v2.0.1" \
-    ospd_openvas="v1.0.1" \
-    python_gvm_version="1.6.0"
+    ospd_openvas="v1.0.1"
 
 RUN echo "Starting Build..." && mkdir /build
 
@@ -52,22 +48,6 @@ RUN cd /build && \
     rm -rf *
     
     #
-    # Install Greenbone Vulnerability Manager (GVMD)
-    #
-    
-RUN cd /build && \
-    wget --no-verbose https://github.com/greenbone/gvmd/archive/$gvmd_version.tar.gz && \
-    tar -zxf $gvmd_version.tar.gz && \
-    cd /build/*/ && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release .. && \
-    make && \
-    make install && \
-    cd /build && \
-    rm -rf *
-    
-    #
     # Install Open Vulnerability Assessment System (OpenVAS) Scanner of the Greenbone Vulnerability Management (GVM) Solution
     #
     
@@ -82,28 +62,6 @@ RUN cd /build && \
     make install && \
     cd /build && \
     rm -rf *
-    
-    #
-    # Install Greenbone Security Assistant (GSA)
-    #
-    
-RUN cd /build && \
-    wget --no-verbose https://github.com/greenbone/gsa/archive/$gsa_version.tar.gz && \
-    tar -zxf $gsa_version.tar.gz && \
-    cd /build/*/ && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release .. && \
-    make && \
-    make install && \
-    cd /build && \
-    rm -rf *
-    
-    #
-    # Install Greenbone Vulnerability Management Python Library
-    #
-    
-RUN pip3 install python-gvm==$python_gvm_version
     
     #
     # Install Open Scanner Protocol daemon (OSPd)
@@ -129,12 +87,7 @@ RUN cd /build && \
     cd /build && \
     rm -rf *
     
-    #
-    # Install GVM-Tools
-    #
-    
-RUN pip3 install gvm-tools==$gvm_tools_version && \
-    echo "/usr/local/lib" > /etc/ld.so.conf.d/openvas.conf && ldconfig && cd / && rm -rf /build
+RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/openvas.conf && ldconfig && cd / && rm -rf /build
 
 COPY scripts/* /
 
