@@ -23,7 +23,6 @@ while  [ "${X}" != "PONG" ]; do
 done
 echo "Redis ready."
 
-
 if  [ ! -d /data ]; then
 	echo "Creating Data folder..."
         mkdir /data

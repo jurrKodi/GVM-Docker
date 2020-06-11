@@ -32,20 +32,29 @@ libssh-gcrypt-dev
 libxml2-dev
 net-tools
 nmap
-nsis
 openssh-client
 perl-base
-pkg-config
+python3-bcrypt
+python3-cffi
+python3-cryptography
+python3-defusedxml
+python3-lxml
+python3-packaging
+python3-paramiko
+python3-pip
+python3-psutil
+python3-pycparser
+python3-pyparsing
+python3-redis
+python3-setuptools
+python3-six
 redis-server
 redis-tools
 rsync
 smbclient
-texlive-fonts-recommended
-texlive-latex-extra
 uuid-dev
 wapiti
 wget
-xml-twig-tools
 EOF
 } | xargs apt-get install -yq --no-install-recommends
 
