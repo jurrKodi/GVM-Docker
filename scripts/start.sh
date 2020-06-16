@@ -1,6 +1,36 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+MASTER_PORT=${MASTER_PORT:-22}
+
+if [ -z $MASTER_ADDRESS ]; then
+	echo "ERROR: The environment variable \"MASTER_ADDRESS\" is not set"
+	exit 1
+fi
+
+if  [ ! -d /data ]; then
+	echo "Creating Data folder..."
+        mkdir /data
+fi
+
+if [ ! -f "/firstrun" ]; then
+	echo "Running first start configuration..."
+
+	echo "Creating Openvas NVT sync user..."
+	useradd --home-dir /usr/local/share/openvas openvas-sync
+	chown openvas-sync:openvas-sync -R /usr/local/share/openvas
+	chown openvas-sync:openvas-sync -R /usr/local/var/lib/openvas
+
+	touch /firstrun
+fi
+
+if  [ ! -d /data/ssh ]; then
+	echo "Setup SSH keys..."
+	mkdir /data/ssh
+	ssh-keyscan -t ed25519 -H -p $MASTER_PORT $MASTER_ADDRESS > /data/ssh/known_hosts
+	ssh-keygen -t ed25519 -f /data/ssh/key -N "" -C "$HOSTNAME"
+fi
+
 if [ ! -d "/run/redis" ]; then
 	mkdir /run/redis
 fi
@@ -22,22 +52,6 @@ while  [ "${X}" != "PONG" ]; do
         X="$(redis-cli -s /run/redis/redis.sock ping)"
 done
 echo "Redis ready."
-
-if  [ ! -d /data ]; then
-	echo "Creating Data folder..."
-        mkdir /data
-fi
-
-if [ ! -f "/firstrun" ]; then
-	echo "Running first start configuration..."
-
-	echo "Creating Openvas NVT sync user..."
-	useradd --home-dir /usr/local/share/openvas openvas-sync
-	chown openvas-sync:openvas-sync -R /usr/local/share/openvas
-	chown openvas-sync:openvas-sync -R /usr/local/var/lib/openvas
-
-	touch /firstrun
-fi
 
 if  [ ! -d /data/plugins ]; then
 	echo "Creating NVT Plugins folder..."
@@ -77,9 +91,19 @@ done
 
 chmod 666 /data/ospd.sock
 
+touch /usr/local/var/log/gvm/ssh-connection.log
+/connect.sh &
+
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "+ Your OpenVAS Scanner container is now ready to use! +"
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo ""
+echo "-------------------------------------------------------"
+echo "Scanner name: $HOSTNAME"
+echo "Public key:   $(cat /data/ssh/key.pub)"
+echo "Master host key (Check that it matches the public key from the master):"
+cat /data/ssh/known_hosts
+echo "-------------------------------------------------------"
 echo ""
 echo "++++++++++++++++"
 echo "+ Tailing logs +"
