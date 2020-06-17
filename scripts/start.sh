@@ -24,6 +24,14 @@ if [ ! -f "/firstrun" ]; then
 	touch /firstrun
 fi
 
+if [ ! -f "/data/scannerid" ]; then
+	echo "Generating scanner id..."
+
+	SCANNER_ID=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | head -n 1)
+	
+	echo $SCANNER_ID > /data/scannerid
+fi
+
 if  [ ! -d /data/ssh ]; then
 	echo "Setup SSH keys..."
 	mkdir /data/ssh
