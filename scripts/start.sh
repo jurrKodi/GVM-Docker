@@ -26,10 +26,8 @@ fi
 
 if [ ! -f "/data/scannerid" ]; then
 	echo "Generating scanner id..."
-
-	SCANNER_ID=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | head -n 1)
 	
-	echo $SCANNER_ID > /data/scannerid
+	echo $(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | head -n 1) > /data/scannerid
 fi
 
 if  [ ! -d /data/ssh ]; then
@@ -107,7 +105,7 @@ echo "+ Your OpenVAS Scanner container is now ready to use! +"
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo ""
 echo "-------------------------------------------------------"
-echo "Scanner name: $HOSTNAME"
+echo "Scanner id: $(cat /data/scannerid)"
 echo "Public key:   $(cat /data/ssh/key.pub)"
 echo "Master host key (Check that it matches the public key from the master):"
 cat /data/ssh/known_hosts
