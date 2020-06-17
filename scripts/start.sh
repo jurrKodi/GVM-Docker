@@ -34,7 +34,7 @@ if  [ ! -d /data/ssh ]; then
 	echo "Setup SSH keys..."
 	mkdir /data/ssh
 	ssh-keyscan -t ed25519 -H -p $MASTER_PORT $MASTER_ADDRESS > /data/ssh/known_hosts
-	ssh-keygen -t ed25519 -f /data/ssh/key -N "" -C ""
+	ssh-keygen -t ed25519 -f /data/ssh/key -N "" -C "$(cat /data/scannerid)"
 fi
 
 if [ ! -d "/run/redis" ]; then
