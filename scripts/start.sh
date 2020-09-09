@@ -262,7 +262,8 @@ done
 chmod 666 /var/run/ospd/ospd.sock
 
 echo "Starting Greenbone Vulnerability Manager..."
-su -c "gvmd --listen=127.0.0.1 --port=9390" gvm
+#su -c "gvmd --listen=127.0.0.1 --port=9390" gvm
+su -c "gvmd -a 0.0.0.0 --port=9390" gvm
 
 echo "Waiting for Greenbone Vulnerability Manager to finish startup..."
 until su -c "gvmd --get-users" gvm; do
@@ -286,9 +287,9 @@ fi
 
 echo "Starting Greenbone Security Assistant..."
 if [ $HTTPS == "true" ]; then
-	su -c "gsad --verbose --gnutls-priorities=SECURE128:-AES-128-CBC:-CAMELLIA-128-CBC:-VERS-SSL3.0:-VERS-TLS1.0 --timeout=$TIMEOUT --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9392" gvm
+	su -c "gsad --verbose --gnutls-priorities=SECURE128:-AES-128-CBC:-CAMELLIA-128-CBC:-VERS-SSL3.0:-VERS-TLS1.0 --timeout=$TIMEOUT --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9443 -r 9080" gvm
 else
-	su -c "gsad --verbose --http-only --timeout=$TIMEOUT --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9392" gvm
+	su -c "gsad --verbose --http-only --timeout=$TIMEOUT --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9080" gvm
 fi
 
 if [ $SSHD == "true" ]; then
