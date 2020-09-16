@@ -284,7 +284,7 @@ fi
 
 echo "Starting Greenbone Security Assistant..."
 if [ $HTTPS == "true" ]; then
-	su -c "gsad --verbose --gnutls-priorities=SECURE128:-AES-128-CBC:-CAMELLIA-128-CBC:-VERS-SSL3.0:-VERS-TLS1.0 --timeout=$TIMEOUT --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9443 -r 9080" gvm
+	su -c "gsad --verbose --gnutls-priorities=SECURE128:-AES-128-CBC:-CAMELLIA-128-CBC:-VERS-SSL3.0:-VERS-TLS1.0 --timeout=$TIMEOUT --mlisten=127.0.0.1 --mport=9390 --port=9443 -r 9080" gvm
 else
 	su -c "gsad --verbose --http-only --timeout=$TIMEOUT --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9080" gvm
 fi
